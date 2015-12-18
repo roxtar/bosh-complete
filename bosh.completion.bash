@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Bash completion support for cf.
+# Bash completion support for bosh.
 
 export COMP_WORDBREAKS=${COMP_WORDBREAKS/\:/}
 export BOSHCOMPLETE_CONFIG_DIR=$HOME/.boshcomplete
@@ -16,20 +16,22 @@ _boshcomplete() {
        COMMANDS=$(cat $BOSHCOMPLETE_CONFIG_DIR/commands.txt)
        for COMMAND in $COMMANDS; do
          if [[ $COMMAND =~ ^$cur ]]; then
-           COMPREPLY+=( "${COMMAND//___/ }" )
+           COMPREPLY+=($COMMAND)
          fi
        done
        ;;
-#     *)
-#       COMMANDS=$(cf $prev --help | grep -A100 OPTIONS | grep -v OPTIONS| awk '{print $1;}')
-#       SPACE_GUID=$(cat ~/.cf/config.json  | jq -r .SpaceFields.Guid)
-#       APP_FILE=$HOME/.cfcomplete/$SPACE_GUID.txt
-#       if [[ ! -e $APP_FILE ]]; then
-#         cf curl /v2/spaces/$SPACE_GUID/summary | jq -r ".apps[] | .name" > $APP_FILE
-#       fi
-#       APPS=$(cat $APP_FILE)
-#       COMPREPLY=($( compgen -W "$COMMANDS $APPS" -- $cur ))
-#       ;;
+     *)
+       IFS=';'
+       COMMANDS=$(cat $BOSHCOMPLETE_CONFIG_DIR/commands.txt)
+       for COMMAND in $COMMANDS; do
+         if [[ $COMMAND =~ ^$prev ]]; then
+           SUB_COMMAND=$(echo $COMMAND | awk -v i=$COMP_CWORD '{print $i;}')
+           if [[ $SUB_COMMAND =~ ^$cur ]]; then
+             COMPREPLY+=($SUB_COMMAND)
+           fi
+         fi
+       done
+       ;;
    esac
    return 0
 }
