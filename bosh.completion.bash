@@ -4,7 +4,8 @@
 export COMP_WORDBREAKS=${COMP_WORDBREAKS/\:/}
 export BOSHCOMPLETE_CONFIG_DIR=$HOME/.boshcomplete
 mkdir -p $BOSHCOMPLETE_CONFIG_DIR
-cp commands.txt $BOSHCOMPLETE_CONFIG_DIR
+DIR=$(dirname "${BASH_SOURCE[0]}")
+cp $DIR/commands.txt $BOSHCOMPLETE_CONFIG_DIR
 
 _boshcomplete() {
    cur=${COMP_WORDS[COMP_CWORD]}
